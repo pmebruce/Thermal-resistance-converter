@@ -1,0 +1,20 @@
+{
+  "name": "熱阻換算器",
+  "short_name": "熱阻換算",
+  "description": "工程用熱阻、面積熱阻與熱傳導係數雙向換算工具",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#06131c",
+  "theme_color": "#081824",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

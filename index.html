@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#081824">
+  <meta name="description" content="工程用熱阻、面積熱阻與熱傳導係數雙向換算工具。">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="熱阻換算">
+  <title>熱阻換算器</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="./icon.svg" alt="" width="42" height="42">
+        <div>
+          <h1>熱阻換算器</h1>
+          <p>Thermal Resistance Converter</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="status-pill" id="networkStatus"><span></span>可離線使用</span>
+        <button class="install-button" id="installButton" type="button" hidden>安裝 App</button>
+      </div>
+    </header>
+
+    <main>
+      <nav class="tabbar" role="tablist" aria-label="計算功能">
+        <button class="tab active" id="tab-single" role="tab" aria-selected="true" aria-controls="panel-single" data-panel="single">單層換算</button>
+        <button class="tab" id="tab-stack" role="tab" aria-selected="false" aria-controls="panel-stack" data-panel="stack">多層串聯</button>
+        <button class="tab" id="tab-units" role="tab" aria-selected="false" aria-controls="panel-units" data-panel="units">單位轉換</button>
+      </nav>
+
+      <section class="panel active" id="panel-single" role="tabpanel" aria-labelledby="tab-single">
+        <div class="workspace-grid">
+          <article class="card input-card">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">SINGLE LAYER</span>
+                <h2>已知什麼？</h2>
+              </div>
+              <button class="text-button" id="resetSingle" type="button">重設</button>
+            </div>
+
+            <fieldset class="mode-switch">
+              <legend class="sr-only">選擇換算方向</legend>
+              <label>
+                <input type="radio" name="singleMode" value="k-to-r" checked>
+                <span>k → 熱阻</span>
+              </label>
+              <label>
+                <input type="radio" name="singleMode" value="r-to-k">
+                <span>熱阻 → k</span>
+              </label>
+            </fieldset>
+
+            <div class="form-grid">
+              <label class="field">
+                <span>材料厚度</span>
+                <div class="input-combo">
+                  <input id="thicknessValue" type="number" inputmode="decimal" min="0" step="any" value="0.2">
+                  <select id="thicknessUnit" aria-label="厚度單位">
+                    <option value="um">µm</option>
+                    <option value="mm" selected>mm</option>
+                    <option value="cm">cm</option>
+                    <option value="m">m</option>
+                    <option value="in">inch</option>
+                    <option value="mil">mil</option>
+                  </select>
+                </div>
+              </label>
+
+              <label class="field" id="conductivityField">
+                <span>熱傳導係數 k</span>
+                <div class="input-combo">
+                  <input id="conductivityValue" type="number" inputmode="decimal" min="0" step="any" value="15">
+                  <select id="conductivityUnit" aria-label="熱傳導係數單位">
+                    <option value="wmk" selected>W/m·K</option>
+                    <option value="wcmk">W/cm·K</option>
+                    <option value="btuhftf">BTU/h·ft·°F</option>
+                  </select>
+                </div>
+              </label>
+
+              <label class="field hidden" id="areaResistanceField">
+                <span>面積熱阻 R″</span>
+                <div class="input-combo">
+                  <input id="areaResistanceValue" type="number" inputmode="decimal" min="0" step="any" value="0.05">
+                  <select id="areaResistanceUnit" aria-label="面積熱阻單位">
+                    <option value="m2kw">m²·K/W</option>
+                    <option value="cm2kw">cm²·K/W</option>
+                    <option value="mm2kw">mm²·K/W</option>
+                    <option value="cin2w" selected>°C·in²/W</option>
+                  </select>
+                </div>
+              </label>
+
+              <label class="field optional-field">
+                <span>接觸面積 <small>選填</small></span>
+                <div class="input-combo">
+                  <input id="areaValue" type="number" inputmode="decimal" min="0" step="any" value="400">
+                  <select id="areaUnit" aria-label="面積單位">
+                    <option value="mm2" selected>mm²</option>
+                    <option value="cm2">cm²</option>
+                    <option value="m2">m²</option>
+                    <option value="in2">in²</option>
+                  </select>
+                </div>
+              </label>
+
+              <label class="field optional-field">
+                <span>通過熱量 Q <small>選填</small></span>
+                <div class="input-combo single-unit">
+                  <input id="powerValue" type="number" inputmode="decimal" min="0" step="any" value="100">
+                  <span>W</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="presets">
+              <span>快速範例</span>
+              <button class="preset-button" type="button" data-preset="div">DIV-300</button>
+              <button class="preset-button" type="button" data-preset="dm">DM-800A</button>
+            </div>
+          </article>
+
+          <article class="card result-card" aria-live="polite">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">RESULT</span>
+                <h2>換算結果</h2>
+              </div>
+              <span class="valid-badge" id="validBadge">數值有效</span>
+            </div>
+
+            <div class="hero-result">
+              <span id="primaryLabel">面積熱阻 R″</span>
+              <strong id="primaryValue">0.0207</strong>
+              <em id="primaryUnit">°C·in²/W</em>
+            </div>
+
+            <dl class="result-list">
+              <div>
+                <dt>等效 k</dt>
+                <dd><strong id="resultK">15.0</strong> <span>W/m·K</span></dd>
+              </div>
+              <div>
+                <dt>面積熱阻 R″</dt>
+                <dd><strong id="resultAreaRsi">1.333 × 10⁻⁵</strong> <span>m²·K/W</span></dd>
+              </div>
+              <div>
+                <dt>英制面積熱阻</dt>
+                <dd><strong id="resultAreaRimp">0.0207</strong> <span>°C·in²/W</span></dd>
+              </div>
+              <div>
+                <dt>指定面積總熱阻 R</dt>
+                <dd><strong id="resultTotalR">0.0333</strong> <span>K/W</span></dd>
+              </div>
+              <div class="temperature-result">
+                <dt>材料溫差 ΔT</dt>
+                <dd><strong id="resultDeltaT">3.33</strong> <span>°C</span></dd>
+              </div>
+            </dl>
+
+            <div class="formula-box">
+              <span>目前使用</span>
+              <code id="formulaText">R″ = t ÷ k</code>
+              <p id="formulaNote">由材料本體 k 計算，不含額外接觸熱阻。</p>
+            </div>
+          </article>
+        </div>
+
+        <aside class="notice">
+          <strong>XT 建模提醒</strong>
+          <p>若用 TDS 實測熱阻反算等效 k，該 k 通常已包含測試壓力下的接觸效果；不要再疊加同一筆 Contact Resistance。</p>
+        </aside>
+      </section>
+
+      <section class="panel" id="panel-stack" role="tabpanel" aria-labelledby="tab-stack" hidden>
+        <article class="card stack-card">
+          <div class="card-heading stack-heading">
+            <div>
+              <span class="eyebrow">LAYER STACK</span>
+              <h2>多層材料串聯</h2>
+            </div>
+            <div class="heading-actions">
+              <button class="secondary-button" id="loadDarbond" type="button">載入 Darbond 範例</button>
+              <button class="primary-button" id="addLayer" type="button">＋ 新增一層</button>
+            </div>
+          </div>
+
+          <div class="stack-context">
+            <label class="compact-field">
+              <span>接觸面積</span>
+              <div class="input-combo">
+                <input id="stackAreaValue" type="number" inputmode="decimal" min="0" step="any" value="400">
+                <select id="stackAreaUnit" aria-label="串聯材料面積單位">
+                  <option value="mm2" selected>mm²</option>
+                  <option value="cm2">cm²</option>
+                  <option value="m2">m²</option>
+                  <option value="in2">in²</option>
+                </select>
+              </div>
+            </label>
+            <label class="compact-field">
+              <span>熱量 Q</span>
+              <div class="input-combo single-unit">
+                <input id="stackPowerValue" type="number" inputmode="decimal" min="0" step="any" value="100">
+                <span>W</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="layer-header" aria-hidden="true">
+            <span>材料</span><span>厚度</span><span>單位</span><span>k (W/m·K)</span><span>熱阻占比</span><span></span>
+          </div>
+          <div id="layerList" class="layer-list"></div>
+        </article>
+
+        <div class="stack-summary">
+          <article class="metric-card accent">
+            <span>總面積熱阻</span>
+            <strong id="stackTotalRimp">0.0560</strong>
+            <em>°C·in²/W</em>
+            <small id="stackTotalRsi">3.613 × 10⁻⁵ m²·K/W</small>
+          </article>
+          <article class="metric-card">
+            <span>整體等效 k</span>
+            <strong id="stackEffectiveK">6.92</strong>
+            <em>W/m·K</em>
+            <small id="stackThickness">總厚度 0.250 mm</small>
+          </article>
+          <article class="metric-card">
+            <span>總熱阻</span>
+            <strong id="stackTotalR">0.0903</strong>
+            <em>K/W</em>
+            <small>依指定接觸面積</small>
+          </article>
+          <article class="metric-card hot">
+            <span>總溫差</span>
+            <strong id="stackDeltaT">9.03</strong>
+            <em>°C</em>
+            <small>ΔT = Q × R</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-units" role="tabpanel" aria-labelledby="tab-units" hidden>
+        <div class="workspace-grid unit-workspace">
+          <article class="card">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">UNIT CONVERTER</span>
+                <h2>單位轉換</h2>
+              </div>
+            </div>
+
+            <div class="unit-form">
+              <label class="field">
+                <span>物理量</span>
+                <select class="full-select" id="unitCategory">
+                  <option value="areaResistance">面積熱阻 R″</option>
+                  <option value="conductivity">熱傳導係數 k</option>
+                  <option value="thickness">厚度</option>
+                  <option value="area">面積</option>
+                  <option value="totalResistance">總熱阻 R</option>
+                  <option value="heatFlux">熱通量</option>
+                </select>
+              </label>
+
+              <div class="conversion-row">
+                <label class="field">
+                  <span>原始數值</span>
+                  <input class="standalone-input" id="unitInputValue" type="number" inputmode="decimal" step="any" value="0.05">
+                </label>
+                <label class="field">
+                  <span>原始單位</span>
+                  <select class="full-select" id="unitFrom"></select>
+                </label>
+                <button class="swap-button" id="swapUnits" type="button" aria-label="交換轉換單位">⇄</button>
+                <label class="field">
+                  <span>目標單位</span>
+                  <select class="full-select" id="unitTo"></select>
+                </label>
+              </div>
+            </div>
+          </article>
+
+          <article class="card unit-result-card" aria-live="polite">
+            <span class="eyebrow">CONVERTED</span>
+            <div class="unit-result">
+              <strong id="unitResultValue">3.2258 × 10⁻⁵</strong>
+              <span id="unitResultLabel">m²·K/W</span>
+            </div>
+            <p id="unitEquation">0.05 °C·in²/W = 3.2258 × 10⁻⁵ m²·K/W</p>
+            <button class="copy-button" id="copyResult" type="button">複製結果</button>
+          </article>
+        </div>
+
+        <article class="card reference-card">
+          <div class="card-heading">
+            <div>
+              <span class="eyebrow">REFERENCE</span>
+              <h2>常用換算</h2>
+            </div>
+          </div>
+          <div class="reference-grid">
+            <div><strong>1 °C·in²/W</strong><span>= 6.4516 × 10⁻⁴ m²·K/W</span></div>
+            <div><strong>1 m²·K/W</strong><span>= 1550.00 °C·in²/W</span></div>
+            <div><strong>1 W/cm·K</strong><span>= 100 W/m·K</span></div>
+            <div><strong>1 BTU/h·ft·°F</strong><span>= 1.7307 W/m·K</span></div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <span>所有計算均在裝置端完成</span>
+      <span>v1.0 · 工程估算工具</span>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>
