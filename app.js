@@ -125,11 +125,11 @@ function loadPreset(name) {
   if (name === "div") {
     $("thicknessValue").value = "0.2";
     $("areaResistanceValue").value = "0.05";
-    showToast("已載入 DIV-300：0.2 mm");
+    showToast("DIV-300：0.2 mm／R″ 0.050 @ 50 psi");
   } else {
     $("thicknessValue").value = "0.05";
     $("areaResistanceValue").value = "0.006";
-    showToast("已載入 DM-800A：0.05 mm");
+    showToast("DM-800A：0.05 mm／R″ 0.006 @ 80 °C、40 psi");
   }
   calculateSingle();
 }
@@ -152,7 +152,7 @@ let layers = [];
 function darbondLayers() {
   return [
     { name: "DIV-300", thickness: 0.2, unit: "mm", k: 6.20 },
-    { name: "DM-800A", thickness: 0.05, unit: "mm", k: 12.92 }
+    { name: "DM-800A", thickness: 0.05, unit: "mm", k: 12.9167 }
   ];
 }
 
@@ -383,7 +383,7 @@ $("resetSingle").addEventListener("click", resetSingle);
 $("loadDarbond").addEventListener("click", function() {
   layers = darbondLayers();
   renderLayers();
-  showToast("已載入兩層 Darbond 範例");
+  showToast("已載入由 TDS 熱阻反算的 Darbond 等效 k");
 });
 $("addLayer").addEventListener("click", function() {
   layers.push({ name: "新材料", thickness: 0.1, unit: "mm", k: 5 });
