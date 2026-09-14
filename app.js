@@ -43,7 +43,7 @@ function formatNumber(value, digits) {
   const precision = digits || 4;
   if (abs < 0.001 || abs >= 100000) {
     const parts = value.toExponential(precision - 1).split("e");
-    const coefficient = Number(parts[0]).toFixed(precision - 1).replace(/\.0+$|(?<=\.[0-9]*?)0+$/g, "");
+    const coefficient = Number(parts[0]).toFixed(precision - 1).replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
     return coefficient + " × 10" + superscriptExponent(Number(parts[1]));
   }
   return value.toLocaleString("zh-TW", { maximumSignificantDigits: precision, useGrouping: true });
@@ -194,7 +194,8 @@ function renderLayers() {
     thickness.setAttribute("aria-label", "第 " + (index + 1) + " 層厚度");
     thickness.addEventListener("input", function() {
       layers[index].thickness = thickness.value;
-      renderLayers();
+      updateLayerShares();
+      calculateStack();
     });
 
     const unit = document.createElement("select");
@@ -209,14 +210,16 @@ function renderLayers() {
     });
     unit.addEventListener("change", function() {
       layers[index].unit = unit.value;
-      renderLayers();
+      updateLayerShares();
+      calculateStack();
     });
 
     const k = makeInput("layer-k", layer.k);
     k.setAttribute("aria-label", "第 " + (index + 1) + " 層熱傳導係數");
     k.addEventListener("input", function() {
       layers[index].k = k.value;
-      renderLayers();
+      updateLayerShares();
+      calculateStack();
     });
 
     const share = document.createElement("div");
@@ -248,6 +251,26 @@ function renderLayers() {
   });
 
   calculateStack();
+}
+
+function updateLayerShares() {
+  const resistances = layers.map(function(layer) {
+    const thickness = positive(layer.thickness) * FACTORS.thickness[layer.unit];
+    const k = positive(layer.k);
+    return thickness / k;
+  });
+  const total = resistances.reduce(function(sum, value) {
+    return sum + (Number.isFinite(value) ? value : 0);
+  }, 0);
+
+  document.querySelectorAll("#layerList .layer-share").forEach(function(share, index) {
+    const resistance = resistances[index];
+    const percentage = total > 0 && Number.isFinite(resistance) ? resistance / total * 100 : 0;
+    const label = share.querySelector("span");
+    const fill = share.querySelector(".share-fill");
+    if (label) label.textContent = formatNumber(resistance / FACTORS.areaResistance.cin2w, 4) + " °C·in²/W · " + formatNumber(percentage, 3) + "%";
+    if (fill) fill.style.width = Math.max(0, Math.min(100, percentage)) + "%";
+  });
 }
 
 function calculateStack() {
