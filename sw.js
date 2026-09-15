@@ -1,8 +1,8 @@
-const CACHE_NAME = "thermal-resistance-converter-v7";
+const CACHE_NAME = "thermal-resistance-converter-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css",
+  "./styles.css?v=8",
   "./app.js",
   "./manifest.webmanifest",
   "./apple-touch-icon-180-v2.png",
