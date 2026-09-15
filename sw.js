@@ -1,11 +1,13 @@
-const CACHE_NAME = "thermal-resistance-converter-v4";
+const CACHE_NAME = "thermal-resistance-converter-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icon-flat-1024.png"
+  "./apple-touch-icon-180-v2.png",
+  "./icon-192-v2.png",
+  "./icon-512-v2.png"
 ];
 
 self.addEventListener("install", function(event) {
