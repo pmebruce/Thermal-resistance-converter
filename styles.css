@@ -593,3 +593,52 @@ footer {
   .stack-summary { grid-template-columns: 1fr; }
   .top-actions .install-button { padding-inline: 12px; }
 }
+
+/* Readability: larger Traditional Chinese UI typography */
+html:lang(zh-Hant) {
+  font-size: 18px;
+}
+
+html:lang(zh-Hant) .brand h1 {
+  font-size: 1.35rem;
+}
+
+html:lang(zh-Hant) .card-heading h2 {
+  font-size: 1.35rem;
+}
+
+html:lang(zh-Hant) .field > span,
+html:lang(zh-Hant) .compact-field > span,
+html:lang(zh-Hant) .mode-switch span,
+html:lang(zh-Hant) .tab,
+html:lang(zh-Hant) .text-button {
+  font-size: 1rem;
+}
+
+html:lang(zh-Hant) .presets > span,
+html:lang(zh-Hant) .result-list dt,
+html:lang(zh-Hant) .hero-result > span,
+html:lang(zh-Hant) .notice strong,
+html:lang(zh-Hant) .notice p,
+html:lang(zh-Hant) .metric-card > span,
+html:lang(zh-Hant) .unit-result-card p {
+  font-size: .94rem;
+}
+
+html:lang(zh-Hant) .field small,
+html:lang(zh-Hant) .result-list dd span,
+html:lang(zh-Hant) .metric-card small,
+html:lang(zh-Hant) .reference-grid span,
+html:lang(zh-Hant) footer {
+  font-size: .82rem;
+}
+
+@media (max-width: 620px) {
+  html:lang(zh-Hant) .brand h1 {
+    font-size: 1.28rem;
+  }
+
+  html:lang(zh-Hant) .tab {
+    font-size: 1rem;
+  }
+}
