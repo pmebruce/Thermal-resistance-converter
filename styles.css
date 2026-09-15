@@ -596,7 +596,7 @@ footer {
 
 /* Readability: larger Traditional Chinese UI typography */
 html:lang(zh-Hant) {
-  font-size: 18px;
+  font-size: 21px;
 }
 
 html:lang(zh-Hant) .brand h1 {
