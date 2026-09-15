@@ -1,4 +1,4 @@
-const CACHE_NAME = "thermal-resistance-converter-v1";
+const CACHE_NAME = "thermal-resistance-converter-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
